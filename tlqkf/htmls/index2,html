@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수업 조 편성기</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            color: #1a1a1a;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .input-group textarea {
+            resize: vertical;
+            height: 120px;
+        }
+        .info-text {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result-container {
+            margin-top: 30px;
+            text-align: left;
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+        }
+        .result-container h2 {
+            color: #1a1a1a;
+            margin-bottom: 15px;
+        }
+        .team-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .team-list li {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 5px solid #007bff;
+        }
+        .team-list li strong {
+            color: #0056b3;
+        }
+        .error-message {
+            color: #d9534f;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>성적 기반 조 편성기</h1>
+    <div class="input-group">
+        <label for="studentData">학생 이름과 점수를 입력하세요</label>
+        <textarea id="studentData" placeholder="예시)
+김민준,95
+이서연,92
+박도윤,88
+정수아,85
+최하은,82
+오지훈,78
+고아라,75
+장민서,73
+한지우,70"></textarea>
+        <div class="info-text">
+            한 줄에 한 명씩 '이름,점수' 형식으로 입력하세요.
+        </div>
+    </div>
+    <div class="input-group">
+        <label for="numTeams">만들고 싶은 조의 수</label>
+        <input type="number" id="numTeams" min="2" value="4">
+    </div>
+    <button onclick="createTeams()">조 편성하기</button>
+    <div id="errorMessage" class="error-message" style="display:none;"></div>
+    
+    <div id="result" class="result-container" style="display:none;">
+        <h2>조 편성 결과</h2>
+        <ul id="teamList" class="team-list"></ul>
+    </div>
+</div>
+
+<script>
+function createTeams() {
+    const studentDataInput = document.getElementById('studentData').value;
+    const numTeamsInput = document.getElementById('numTeams').value;
+    const errorMessageDiv = document.getElementById('errorMessage');
+    const resultDiv = document.getElementById('result');
+    const teamListUl = document.getElementById('teamList');
+
+    // 입력값 유효성 검사
+    if (!studentDataInput.trim() || !numTeamsInput) {
+        errorMessageDiv.textContent = '학생 정보와 조의 수를 모두 입력해주세요.';
+        errorMessageDiv.style.display = 'block';
+        resultDiv.style.display = 'none';
+        return;
+    }
+
+    const numTeams = parseInt(numTeamsInput);
+    if (isNaN(numTeams) || numTeams < 2) {
+        errorMessageDiv.textContent = '조의 수는 2 이상의 숫자로 입력해주세요.';
+        errorMessageDiv.style.display = 'block';
+        resultDiv.style.display = 'none';
+        return;
+    }
+
+    const lines = studentDataInput.split('\n');
+    let students = [];
+    let isValid = true;
+    lines.forEach(line => {
+        const parts = line.split(',');
+        if (parts.length === 2) {
+            const name = parts[0].trim();
+            const score = parseInt(parts[1].trim());
+            if (name && !isNaN(score)) {
+                students.push({ name: name, score: score });
+            } else {
+                isValid = false;
+            }
+        } else if (line.trim() !== '') {
+            isValid = false;
+        }
+    });
+
+    if (!isValid) {
+        errorMessageDiv.textContent = '입력 형식이 올바르지 않습니다. "이름,점수" 형식으로 입력해주세요.';
+        errorMessageDiv.style.display = 'block';
+        resultDiv.style.display = 'none';
+        return;
+    }
+
+    if (students.length === 0) {
+        errorMessageDiv.textContent = '학생 정보를 입력해주세요.';
+        errorMessageDiv.style.display = 'block';
+        resultDiv.style.display = 'none';
+        return;
+    }
+
+    if (students.length < numTeams) {
+        errorMessageDiv.textContent = '학생 수가 조의 수보다 적습니다.';
+        errorMessageDiv.style.display = 'block';
+        resultDiv.style.display = 'none';
+        return;
+    }
+
+    errorMessageDiv.style.display = 'none';
+
+    // 성적 기준으로 내림차순 정렬
+    students.sort((a, b) => b.score - a.score);
+
+    // 지그재그 방식으로 조 배정
+    const teams = Array.from({ length: numTeams }, () => []);
+    
+    students.forEach((student, i) => {
+        if (Math.floor(i / numTeams) % 2 === 0) {
+            teams[i % numTeams].push(student.name);
+        } else {
+            teams[numTeams - 1 - (i % numTeams)].push(student.name);
+        }
+    });
+    
+    // 결과 출력
+    teamListUl.innerHTML = '';
+    teams.forEach((team, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<strong>${index + 1}조</strong>: ${team.join(', ')}`;
+        teamListUl.appendChild(li);
+    });
+
+    resultDiv.style.display = 'block';
+}
+</script>
+
+</body>
+</html>
