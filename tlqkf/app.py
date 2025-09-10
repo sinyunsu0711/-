@@ -6,8 +6,8 @@ import os
 st.set_page_config(layout="wide")
 
 # Path to the HTML file
-# Ensure that 'index.html' is in the same directory as this script.
-html_file_path = os.path.join(os.path.dirname(__file__), "./htmls/index.html")
+# The path is now set to 'team_creator.html' within the current directory.
+html_file_path = os.path.join(os.path.dirname(__file__), "team_creator.html")
 
 # Check if the HTML file exists
 if not os.path.exists(html_file_path):
