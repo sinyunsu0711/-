@@ -1,27 +1,209 @@
-# app.py
+#app.py
 import streamlit as st
 import os
 
 # Set a wide layout for the app
 st.set_page_config(layout="wide")
 
-# Path to the HTML file
-# The path is now set to 'team_creator.html' within the current directory.
-html_file_path = os.path.join(os.path.dirname(__file__), "team_creator.html")
+# HTML 파일의 전체 내용을 변수에 저장합니다.
+html_content = """
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정보과제연구 계획서: 절차적 생성</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        .container {
+            max-width: 900px;
+        }
+        .header {
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .header h1 {
+            font-weight: 700;
+        }
+        .nav-link {
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .nav-link:hover {
+            color: #4b5563;
+            transform: translateY(-2px);
+        }
+        .section-box {
+            background-color: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        .section-title {
+            color: #1f2937;
+            font-weight: 700;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        h3 {
+            font-weight: 600;
+            color: #374151;
+        }
+        .bg-custom-blue {
+            background-color: #d1e2ff;
+        }
+        .text-custom-blue {
+            color: #1f2937;
+        }
+        /* Mobile-first approach for responsive design */
+        @media (max-width: 767px) {
+            .header {
+                padding: 1rem;
+            }
+            .nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            .nav-link {
+                margin: 0.5rem 0;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
 
-# Check if the HTML file exists
-if not os.path.exists(html_file_path):
-    st.error(f"Error: The HTML file was not found at {html_file_path}")
-    st.stop()
+    <!-- Header & Navigation Bar -->
+    <header class="header p-6">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+            <h1 class="text-2xl md:text-3xl text-custom-blue">정보과제연구 계획서</h1>
+            <nav class="nav flex space-x-2 md:space-x-4 mt-4 md:mt-0">
+                <a href="#intro" class="nav-link text-gray-700">서론</a>
+                <a href="#background" class="nav-link text-gray-700">이론적 배경</a>
+                <a href="#methods" class="nav-link text-gray-700">연구 방법</a>
+                <a href="#results" class="nav-link text-gray-700">기대 효과</a>
+            </nav>
+        </div>
+    </header>
 
-# Read the HTML content from the file
-try:
-    with open(html_file_path, "r", encoding="utf-8") as f:
-        html_content = f.read()
-    
-    # Render the HTML content
-    st.html(html_content)
+    <main class="container mx-auto p-4 md:p-8 space-y-8">
 
-except Exception as e:
-    st.error(f"An error occurred while reading the HTML file: {e}")
-    
+        <!-- Research Title Section -->
+        <section class="section-box p-6 md:p-10 text-center">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-2">게임 속 지형 생성을 위한<br>절차적 생성 알고리즘 연구</h2>
+            <p class="text-lg text-gray-600 mt-4">고등학생 정보과제연구 계획서</p>
+        </section>
+
+        <!-- Introduction Section -->
+        <section id="intro" class="section-box p-6 md:p-10">
+            <h2 class="section-title text-2xl md:text-3xl pb-4 mb-6">1. 서론</h2>
+
+            <!-- Motivation & Necessity -->
+            <div class="mb-8">
+                <h3 class="text-xl mb-2">연구 동기 및 필요성</h3>
+                <p class="text-gray-700 leading-relaxed">평소에 즐겨 하던 게임 '마인크래프트'나 '로블록스'를 보며, 무한하고 다채로운 지형이 어떻게 만들어지는지에 대한 궁금증을 가지게 되었습니다. 게임 개발에 있어 방대한 월드를 수작업으로 만드는 것은 엄청난 시간과 비용이 소모되는 일입니다. 절차적 생성 기술은 이러한 한계를 극복하고, 개발 효율성을 높이며 플레이어에게 매번 새로운 경험을 제공하는 핵심 기술입니다. 따라서, 이러한 알고리즘의 원리를 탐구하고 직접 구현해보는 것은 게임 개발 분야에 대한 깊이 있는 이해를 얻는 데 매우 중요하다고 생각합니다.</p>
+            </div>
+
+            <!-- Purpose -->
+            <div class="mb-8">
+                <h3 class="text-xl mb-2">연구 목적</h3>
+                <p class="text-gray-700 leading-relaxed">이 연구의 목적은 게임 속 지형을 자동으로 생성하는 절차적 생성 알고리즘의 원리를 분석하고, 이를 기반으로 간단한 2D 지형 생성 프로그램을 구현하는 것입니다. 구체적으로는 노이즈(Noise) 알고리즘을 활용한 지형 생성 방식을 중심으로 연구하여, 이 기술이 게임 환경 구성에 어떻게 적용될 수 있는지 그 가능성을 확인하는 것을 목표로 합니다.</p>
+            </div>
+
+            <!-- Research Questions -->
+            <div>
+                <h3 class="text-xl mb-2">연구 문제</h3>
+                <ul class="list-disc list-inside text-gray-700 leading-relaxed">
+                    <li>지형 생성에 주로 사용되는 절차적 생성 알고리즘에는 어떤 종류가 있으며, 각 알고리즘의 특징과 장단점은 무엇인가?</li>
+                    <li>대표적인 노이즈 알고리즘인 퍼린 노이즈(Perlin Noise)를 활용하여, 높이와 특성이 자연스럽게 연결된 지형을 효과적으로 생성하는 방법은 무엇인가?</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Theoretical Background Section -->
+        <section id="background" class="section-box p-6 md:p-10">
+            <h2 class="section-title text-2xl md:text-3xl pb-4 mb-6">2. 이론적 배경</h2>
+
+            <!-- Related Theories/Technologies -->
+            <div class="mb-8">
+                <h3 class="text-xl mb-2">관련 이론/기술</h3>
+                <p class="text-gray-700 leading-relaxed">이 연구를 위해 다음과 같은 이론과 기술에 대한 이해가 필요합니다.</p>
+                <ul class="list-disc list-inside text-gray-700 leading-relaxed mt-2">
+                    <li><b>절차적 생성(Procedural Generation):</b> 알고리즘을 통해 데이터를 자동 생성하는 기술.</li>
+                    <li><b>노이즈(Noise) 함수:</b> 자연스러운 불규칙성을 만드는 수학적 함수. 특히 퍼린 노이즈와 심플렉스 노이즈의 개념을 깊이 탐구해야 합니다.</li>
+                    <li><b>2D 배열(Array) 또는 그리드(Grid) 구조:</b> 지형 데이터를 저장하고 표현하기 위한 프로그래밍 자료 구조.</li>
+                    <li><b>프로그래밍 언어:</b> Python과 같은 언어를 활용하여 알고리즘을 직접 구현하고, Pygame과 같은 라이브러리를 사용해 시각적으로 지형을 표현합니다.</li>
+                </ul>
+            </div>
+
+            <!-- Prior Research -->
+            <div>
+                <h3 class="text-xl mb-2">선행 연구 조사</h3>
+                <p class="text-gray-700 leading-relaxed">이 연구 주제와 관련해서 찾아볼 만한 선행 연구 분야나 검색 키워드는 다음과 같습니다.</p>
+                <ul class="list-disc list-inside text-gray-700 leading-relaxed mt-2">
+                    <li>게임 개발: 게임 엔진(Unity, Unreal Engine)에서의 절차적 지형 생성 플러그인</li>
+                    <li>컴퓨터 그래픽스: 노이즈 함수(Noise Function), 텍스처 생성 알고리즘</li>
+                    <li>컴퓨터 과학: 무작위성(Randomness), 알고리즘 및 데이터 구조</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Research Methods Section -->
+        <section id="methods" class="section-box p-6 md:p-10">
+            <h2 class="section-title text-2xl md:text-3xl pb-4 mb-6">3. 연구 내용 및 방법</h2>
+            
+            <!-- Scope -->
+            <div class="mb-8">
+                <h3 class="text-xl mb-2">연구 대상 및 범위</h3>
+                <p class="text-gray-700 leading-relaxed">이 연구는 2D 환경에서의 지형 생성에 초점을 맞춥니다. 3D 지형 생성은 제외하며, 주로 퍼린 노이즈를 활용한 알고리즘을 중심으로 연구를 진행합니다. 개발 도구로는 Python 언어와 Pygame 라이브러리를 사용하며, 지형의 높이(고도), 온도, 습도와 같은 변수를 2D 맵에 표현하는 것을 목표로 합니다.</p>
+            </div>
+
+            <!-- Procedures & Methods -->
+            <div class="mb-8">
+                <h3 class="text-xl mb-2">연구 절차 및 방법</h3>
+                <ol class="list-decimal list-inside text-gray-700 leading-relaxed space-y-2">
+                    <li><b>이론적 배경 조사:</b> 퍼린 노이즈의 원리와 동작 방식에 대한 논문, 서적, 온라인 자료를 조사하고 학습합니다.</li>
+                    <li><b>알고리즘 설계:</b> 조사한 내용을 바탕으로 퍼린 노이즈를 활용한 2D 지형 생성 알고리즘을 설계합니다. 지형의 높이에 따라 바다, 평지, 산 등을 구분하는 조건을 정의합니다.</li>
+                    <li><b>프로그램 구현:</b> Python과 Pygame을 이용하여 설계한 알고리즘을 코드로 구현합니다. 2D 그리드에 각 지점의 노이즈 값을 계산하여 색상으로 시각화합니다.</li>
+                    <li><b>결과 분석 및 평가:</b> 구현된 지형 생성 프로그램의 결과를 분석하여, 알고리즘의 매개변수(예: 옥타브, 주파수, 스케일)가 지형의 형태에 미치는 영향을 평가합니다.</li>
+                    <li><b>보고서 작성:</b> 연구 과정, 구현된 코드, 결과물, 그리고 분석 내용을 포함한 최종 연구 보고서를 작성합니다.</li>
+                </ol>
+            </div>
+
+            <!-- Timeline -->
+            <div>
+                <h3 class="text-xl mb-2">예상 주요 활동 일정</h3>
+                <ul class="list-disc list-inside text-gray-700 leading-relaxed">
+                    <li><b>1~2주차:</b> 연구 주제 관련 자료 조사 및 이론 학습 (퍼린 노이즈, 절차적 생성)</li>
+                    <li><b>3~4주차:</b> Python 기반 지형 생성 알고리즘 설계 및 기초 코딩</li>
+                    <li><b>5~6주차:</b> 알고리즘 구현 및 Pygame을 이용한 시각화</li>
+                    <li><b>7주차:</b> 매개변수 조절을 통한 다양한 지형 생성 및 결과 분석</li>
+                    <li><b>8주차:</b> 최종 보고서 작성 및 발표 준비</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Expected Results Section -->
+        <section id="results" class="section-box p-6 md:p-10">
+            <h2 class="section-title text-2xl md:text-3xl pb-4 mb-6">4. 기대 효과 및 활용 방안</h2>
+            <p class="text-gray-700 leading-relaxed">이 연구를 통해 절차적 생성 알고리즘의 핵심 원리를 깊이 있게 이해할 수 있으며, 이는 향후 게임 개발자나 컴퓨터 그래픽스 분야의 진로를 탐색하는 데 중요한 밑거름이 될 것입니다. 또한, 구현된 프로그램은 2D 게임의 배경, 맵 디자인뿐만 아니라 데이터 시각화, 예술 분야 등 다양한 곳에 응용될 수 있을 것입니다. 연구 보고서와 소스 코드를 온라인 커뮤니티에 공개하여, 같은 분야에 관심 있는 다른 학생들에게 도움이 될 수 있도록 활용할 계획입니다.</p>
+        </section>
+
+        <!-- References Section -->
+        <section class="section-box p-6 md:p-10">
+            <h2 class="section-title text-2xl md:text-3xl pb-4 mb-6">5. 참고 문헌</h2>
+            <ul class="list-disc list-inside text-gray-700 leading-relaxed space-y-2">
+                <li>서다은, 조영대, 손우람 외 3명. (2020). <i>가상 배경 제작을 위한 절차적 도시 생성 플러그인 UI 설계</i>. 한국게임학회 논문지, 20(2), 27-37.</li>
+                <li>조별희, 안성진, 이준영 외 1명. (2021). <i>언리얼 엔진에서의 절차적 생성을 통한 3D 던전 구현</i>. 한국정보과학회 논문지, 25(3), 112-120.</li>
+            </ul>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white text-center py-6 mt-
