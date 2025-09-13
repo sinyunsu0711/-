@@ -17,6 +17,14 @@ st.set_page_config(
     layout="wide"
 )
 
+# 파일 이름과 표시될 이름 매핑
+# Mapping between file names and display names
+file_display_names = {
+    "index.html": "정보과제연구 계획서",
+    "index2.html": "성적 기반 조 편성기",
+    "index3.html": "숫자 퍼즐 게임"
+}
+
 # 폴더 내의 HTML 파일 목록 가져오기
 # Get a list of HTML files in the specified folder.
 def get_html_files():
@@ -28,6 +36,7 @@ def get_html_files():
         return []
 
 html_files = get_html_files()
+display_files = [file_display_names.get(f, f) for f in html_files]
 
 # 사이드바에 파일 선택 위젯 생성
 # Create a file selection widget in the sidebar.
@@ -35,10 +44,14 @@ if not html_files:
     st.warning("HTML 파일이 없습니다. 'htmls' 폴더에 파일을 추가해주세요.")
 else:
     st.sidebar.header("HTML 파일 선택")
-    selected_file = st.sidebar.radio(
+    selected_display_name = st.sidebar.radio(
         "파일 목록",
-        html_files
+        display_files
     )
+    
+    # 표시된 이름에 해당하는 실제 파일 이름 찾기
+    # Find the actual file name corresponding to the display name
+    selected_file = html_files[display_files.index(selected_display_name)]
 
     # 선택된 파일 내용 읽기
     # Read the content of the selected file.
@@ -47,7 +60,7 @@ else:
 
     # Streamlit에 HTML 내용 렌더링
     # Render the HTML content in Streamlit.
-    st.header(f"'{selected_file}'")
+    st.header(f"'{selected_display_name}'")
     components.html(html_content, height=800, scrolling=True)
 
     st.markdown("---")
