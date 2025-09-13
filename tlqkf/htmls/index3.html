@@ -88,17 +88,19 @@
             padding: 1rem;
             border-radius: 0;
             background-color: #1e293b;
+            justify-content: center;
+            align-items: center;
+            overflow: auto; /* Allow scrolling if content is too large */
         }
         body.is-fullscreen .flex-col.md\\:flex-row {
             flex-direction: column !important;
             align-items: center !important;
         }
         body.is-fullscreen #board {
-            width: 100%;
-            height: auto;
             max-width: 95vh;
             max-height: 60vh;
-            margin: 0 auto;
+            width: auto;
+            height: auto;
         }
         body.is-fullscreen .text-4xl {
             font-size: 2rem;
