@@ -1,38 +1,50 @@
 import streamlit as st
 import os
+import streamlit.components.v1 as components
 
-# Set a wide layout for the app
-st.set_page_config(layout="wide")
+# HTML 파일을 담고 있는 폴더 경로 설정
+# The folder containing the HTML files
+HTMLS_FOLDER = "htmls"
 
-# 사이드바에서 표시할 HTML 파일을 선택합니다.
-page = st.sidebar.selectbox(
-    "페이지를 선택하세요",
-    ("정보과제연구 계획서", "수업 조 편성기", "숫자 퍼즐 게임")
+# Streamlit 앱의 페이지 설정
+# Set the title for the Streamlit app
+st.set_page_config(
+    page_title="HTML 파일 뷰어",
+    layout="wide"
 )
 
-# 선택된 페이지에 따라 HTML 파일 경로를 설정합니다.
-if page == "정보과제연구 계획서":
-    html_file_name = "index.html"
-elif page == "수업 조 편성기":
-    html_file_name = "index2.html"
-elif page == "숫자 퍼즐 게임":
-    html_file_name = "index3.html"
+# 폴더 내의 HTML 파일 목록 가져오기
+# Get a list of HTML files in the specified folder
+def get_html_files():
+    try:
+        files = [f for f in os.listdir(HTMLS_FOLDER) if f.endswith('.html')]
+        return sorted(files)
+    except FileNotFoundError:
+        st.error(f"'{HTMLS_FOLDER}' 폴더를 찾을 수 없습니다. '{HTMLS_FOLDER}' 폴더가 'app.py'와 같은 위치에 있는지 확인해주세요.")
+        return []
 
-# HTML 파일의 전체 경로를 생성합니다.
-html_file_path = os.path.join(os.path.dirname(__file__), "htmls", html_file_name)
+html_files = get_html_files()
 
-# HTML 파일이 존재하는지 확인합니다.
-if not os.path.exists(html_file_path):
-    st.error(f"오류: HTML 파일을 찾을 수 없습니다. 경로: {html_file_path}")
-    st.stop()
+# 사이드바에 파일 선택 위젯 생성
+# Create a file selection widget in the sidebar
+if not html_files:
+    st.warning("HTML 파일이 없습니다. 'htmls' 폴더에 파일을 추가해주세요.")
+else:
+    st.sidebar.header("HTML 파일 선택")
+    selected_file = st.sidebar.radio(
+        "파일 목록",
+        html_files
+    )
 
-# HTML 파일의 내용을 읽어옵니다.
-try:
-    with open(html_file_path, "r", encoding="utf-8") as f:
+    # 선택된 파일 내용 읽기
+    # Read the content of the selected file
+    with open(os.path.join(HTMLS_FOLDER, selected_file), "r", encoding="utf-8") as f:
         html_content = f.read()
-    
-    # HTML 내용을 Streamlit에 렌더링합니다.
-    st.html(html_content)
 
-except Exception as e:
-    st.error(f"HTML 파일을 읽는 중 오류가 발생했습니다: {e}")
+    # Streamlit에 HTML 내용 렌더링
+    # Render the HTML content in Streamlit
+    st.header(f"'{selected_file}'")
+    components.html(html_content, height=800, scrolling=True)
+
+    st.markdown("---")
+    st.info("왼쪽 사이드바에서 다른 HTML 파일을 선택하세요.")
