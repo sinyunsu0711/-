@@ -17,10 +17,9 @@ elif page == "수업 조 편성기":
     html_file_name = "index2.html"
 elif page == "숫자 퍼즐 게임":
     html_file_name = "index3.html"
-    
+
 # HTML 파일의 전체 경로를 생성합니다.
-# 경로를 현재 app.py 파일이 있는 디렉토리로 설정합니다.
-html_file_path = os.path.join(os.path.dirname(__file__), html_file_name)
+html_file_path = os.path.join(os.path.dirname(__file__), "htmls", html_file_name)
 
 # HTML 파일이 존재하는지 확인합니다.
 if not os.path.exists(html_file_path):
