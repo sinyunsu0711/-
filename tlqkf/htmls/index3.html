@@ -24,13 +24,10 @@
             max-width: 900px;
             width: 100%;
             background-color: #fff;
-            padding: 1.5rem;
+            padding: 2rem;
             border-radius: 1.5rem;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease-in-out;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
         .grid-cell {
             width: 100%;
@@ -41,7 +38,7 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #334155;
             background-color: #f8fafc;
@@ -63,18 +60,11 @@
             background-color: #e9e9e9;
             color: #b0b0b0;
         }
+        .card-deck {
+            min-height: 8rem;
+        }
         .drawn-card-placeholder {
             min-height: 4rem;
-        }
-        .control-buttons {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .control-buttons button {
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
         }
         /* Fullscreen-specific styles */
         body.is-fullscreen {
@@ -87,35 +77,24 @@
             max-width: none;
             padding: 1rem;
             border-radius: 0;
-            background-color: #1e293b;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            overflow: auto; /* Allow scrolling if content is too large */
+            background-color: #1e293b;
         }
         body.is-fullscreen .flex-col.md\\:flex-row {
             flex-direction: column !important;
             align-items: center !important;
         }
         body.is-fullscreen #board {
-            max-width: 95vh;
-            max-height: 60vh;
             width: auto;
-            height: auto;
+            max-width: 90vh; /* Changed from 95vh */
+            max-height: 55vh; /* Changed from 60vh */
         }
         body.is-fullscreen .text-4xl {
-            font-size: 2rem;
-            margin-bottom: 1rem;
+            font-size: 2.5rem;
         }
-        body.is-fullscreen .p-1\\.5rem {
-            padding: 1rem;
-        }
-        body.is-fullscreen .drawn-card-placeholder {
-            font-size: 1rem;
-        }
-        body.is-fullscreen .control-buttons {
-            margin-top: 1rem;
-        }
-        
         /* Message Box Style */
         #message-box {
             position: fixed;
@@ -128,54 +107,69 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             z-index: 1000;
             display: none;
-            text-align: center;
         }
     </style>
 </head>
 <body class="bg-gray-100 flex flex-col items-center justify-center p-4">
-    <div id="game-container" class="container mx-auto p-6 rounded-3xl shadow-2xl transition-all">
-        <h1 class="text-4xl md:text-5xl font-extrabold text-center mb-4 text-slate-900">숫자 퍼즐 게임</h1>
+    <div id="game-container" class="container mx-auto p-8 rounded-3xl shadow-2xl transition-all">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-center mb-6 text-slate-900">숫자 퍼즐 게임</h1>
 
-        <div class="flex flex-col md:flex-row items-center justify-between mb-4 w-full space-y-2 md:space-y-0 md:space-x-2">
-            <div id="status-card" class="bg-blue-500 text-white p-2 rounded-lg shadow-md flex-1 w-full text-center font-bold text-sm">
+        <div class="flex flex-col md:flex-row items-center justify-between mb-6 space-y-4 md:space-y-0 md:space-x-4">
+            <div id="status-card" class="bg-blue-500 text-white p-4 rounded-xl shadow-md flex-1 w-full md:w-auto text-center font-bold">
                 <span id="score-text">점수: 0</span>
             </div>
-            <div id="drawn-card-container" class="w-24 h-10 bg-white border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center text-gray-500 font-bold text-sm">
+            <div id="drawn-card-container" class="w-full md:w-40 h-16 bg-white border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center text-gray-500 font-bold text-lg p-2">
                 <span id="drawn-card-placeholder">카드 뽑기</span>
+            </div>
+            <div class="flex-1 flex flex-col space-y-2 w-full md:w-auto">
+                <button id="draw-card-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl transition-transform transform hover:scale-105 shadow-md">
+                    카드 뽑기
+                </button>
+                <button id="discard-card-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-xl transition-transform transform hover:scale-105 shadow-md">
+                    카드 버리기
+                </button>
             </div>
         </div>
         
-        <div class="control-buttons mb-4">
-            <button id="draw-card-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg transition-transform transform hover:scale-105 shadow-md">
-                카드 뽑기
-            </button>
-            <button id="discard-card-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-lg transition-transform transform hover:scale-105 shadow-md">
-                카드 버리기
-            </button>
-            <button id="start-simulation-btn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-lg transition-transform transform hover:scale-105 shadow-md">
+        <div id="simulation-controls" class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4 mb-6">
+            <button id="start-simulation-btn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl transition-transform transform hover:scale-105 shadow-md flex-1">
                 시뮬레이션 시작
             </button>
-            <button id="stop-simulation-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition-transform transform hover:scale-105 shadow-md hidden">
+            <button id="stop-simulation-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-xl transition-transform transform hover:scale-105 shadow-md flex-1 hidden">
                 시뮬레이션 중지
             </button>
-            <button id="restart-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-lg transition-transform transform hover:scale-105 shadow-md">
+            <button id="restart-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-xl transition-transform transform hover:scale-105 shadow-md flex-1">
                 다시 시작
             </button>
-            <button id="fullscreen-btn" class="bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-lg transition-transform transform hover:scale-105 shadow-md">
+            <button id="fullscreen-btn" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-6 rounded-xl transition-transform transform hover:scale-105 shadow-md flex-1">
                 전체 화면
             </button>
         </div>
         
-        <div id="board" class="grid grid-cols-9 gap-1 aspect-square w-full mx-auto"></div>
+        <div id="board" class="grid grid-cols-9 gap-1 aspect-square mx-auto mb-6"></div>
         
+        <div id="message-area" class="text-center p-4 rounded-xl text-lg font-bold transition-all duration-300"></div>
+
+        <div class="mt-8 p-6 bg-gray-50 rounded-xl shadow-inner">
+            <h2 class="text-2xl font-bold mb-4">게임 규칙</h2>
+            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                <li>1부터 100까지의 숫자 카드를 뽑아 9x9 칸의 보드를 채웁니다.</li>
+                <li>**1의 자리 규칙:** 각 3x3 구역 안에는 1의 자리 숫자가 **0부터 8** 또는 **1부터 9**까지 중복 없이 모두 들어가야 합니다.</li>
+                <li>**10의 자리 규칙:** 가로 또는 세로로 이어진 9개 칸에는 10의 자리 숫자가 **0부터 8** 또는 **1부터 9**까지 중복 없이 모두 들어가야 합니다.</li>
+                <li>**카드 놓기:** 뽑은 카드를 보드의 빈칸에 놓을 수 있습니다. 규칙을 위반하면 카드는 버려집니다.</li>
+                <li>**카드 교체:** 이미 채워진 칸을 클릭하여 뽑은 카드와 교체할 수 있습니다.</li>
+                <li>**카드 버리기:** 뽑은 카드가 필요 없으면 버릴 수 있습니다. 버릴 때마다 보드의 무작위 칸 하나가 지워지는 페널티가 있습니다.</li>
+                <li>버리거나 지워진 카드는 다시 카드 더미로 돌아갑니다.</li>
+            </ul>
+        </div>
     </div>
-    <div id="message-box" class="p-4 bg-white rounded-lg shadow-xl">
+    <div id="message-box" class="p-4 bg-white rounded-lg shadow-xl text-center">
         <p id="message-content"></p>
         <button id="message-ok" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg">확인</button>
     </div>
     
     <script>
-        // DOM elements
+        // DOM 요소 가져오기
         const boardElement = document.getElementById('board');
         const drawButton = document.getElementById('draw-card-btn');
         const discardButton = document.getElementById('discard-card-btn');
@@ -186,13 +180,14 @@
         const drawnCardContainer = document.getElementById('drawn-card-container');
         const drawnCardPlaceholder = document.getElementById('drawn-card-placeholder');
         const scoreText = document.getElementById('score-text');
+        const messageArea = document.getElementById('message-area');
         const container = document.getElementById('game-container');
         const messageBox = document.getElementById('message-box');
         const messageContent = document.getElementById('message-content');
         const messageOk = document.getElementById('message-ok');
         const body = document.body;
 
-        // Game state variables
+        // 게임 상태 변수
         let cardDeck = [];
         let board = Array.from({ length: 9 }, () => Array(9).fill(0));
         let drawnCard = null;
@@ -200,7 +195,7 @@
         let filledCells = 0;
         let simulationInterval = null;
 
-        // Game initialization
+        // 게임 초기화
         const initializeGame = () => {
             cardDeck = Array.from({ length: 100 }, (_, i) => i + 1);
             shuffleDeck();
@@ -213,7 +208,7 @@
             stopSimulation();
         };
 
-        // Shuffle deck
+        // 카드 섞기
         const shuffleDeck = () => {
             for (let i = cardDeck.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -221,7 +216,7 @@
             }
         };
 
-        // Update UI
+        // UI 갱신
         const updateUI = () => {
             scoreText.textContent = `점수: ${score}`;
             if (drawnCard !== null) {
@@ -233,7 +228,7 @@
                 drawnCardContainer.classList.add('text-gray-500', 'border-dashed');
                 drawnCardContainer.classList.remove('bg-blue-500', 'text-white', 'border-blue-500');
             }
-            // Simulation button state
+            // 시뮬레이션 버튼 상태
             if (simulationInterval) {
                 startSimulationButton.classList.add('hidden');
                 stopSimulationButton.classList.remove('hidden');
@@ -243,7 +238,7 @@
             }
         };
 
-        // Render board
+        // 보드 렌더링
         const renderBoard = () => {
             boardElement.innerHTML = '';
             board.forEach((row, rowIndex) => {
@@ -253,7 +248,7 @@
                     cell.dataset.row = rowIndex;
                     cell.dataset.col = colIndex;
 
-                    // 3x3 section borders
+                    // 3x3 구역 테두리 스타일링
                     if (rowIndex % 3 === 0 && rowIndex > 0) {
                         cell.style.borderTopWidth = '3px';
                         cell.style.borderTopColor = '#60a5fa';
@@ -269,7 +264,7 @@
             });
         };
 
-        // Show message box
+        // 메시지 표시 (임시 메시지 박스로 변경)
         const setMessage = (message, isError = false) => {
             messageContent.textContent = message;
             messageBox.style.display = 'block';
@@ -278,14 +273,14 @@
             messageOk.focus();
         };
 
-        // Validate card placement
+        // 카드 놓기 유효성 검사
         const isPlacementValid = (card, row, col) => {
             const unit = card % 10;
             const ten = Math.floor(card / 10);
             const subgridStartRow = Math.floor(row / 3) * 3;
             const subgridStartCol = Math.floor(col / 3) * 3;
             
-            // Check unit digit rule (3x3 grid)
+            // 1의 자리 규칙 확인 (3x3 구역)
             for (let i = subgridStartRow; i < subgridStartRow + 3; i++) {
                 for (let j = subgridStartCol; j < subgridStartCol + 3; j++) {
                     if (board[i][j] !== 0 && board[i][j] % 10 === unit) {
@@ -294,14 +289,14 @@
                 }
             }
             
-            // Check ten digit rule (row)
+            // 10의 자리 규칙 확인 (가로줄)
             for (let j = 0; j < 9; j++) {
                 if (board[row][j] !== 0 && Math.floor(board[row][j] / 10) === ten) {
                     return false;
                 }
             }
             
-            // Check ten digit rule (column)
+            // 10의 자리 규칙 확인 (세로줄)
             for (let i = 0; i < 9; i++) {
                 if (board[i][col] !== 0 && Math.floor(board[i][col] / 10) === ten) {
                     return false;
@@ -310,7 +305,7 @@
             return true;
         };
 
-        // Event handlers
+        // 이벤트 핸들러
         const handleDrawCard = () => {
             if (drawnCard !== null) {
                 setMessage("이미 뽑은 카드가 있습니다. 먼저 사용하거나 버리세요.", true);
@@ -371,7 +366,7 @@
             const existingCard = board[row][col];
             
             if (existingCard === 0) {
-                // Place new card
+                // 새로운 카드 놓기
                 if (isPlacementValid(drawnCard, row, col)) {
                     board[row][col] = drawnCard;
                     drawnCard = null;
@@ -384,9 +379,9 @@
                     drawnCard = null;
                 }
             } else {
-                // Swap card
+                // 카드 교체
                 const oldCard = existingCard;
-                board[row][col] = 0; // Temporarily remove for validation
+                board[row][col] = 0; // 임시 제거 후 유효성 검사
                 if (isPlacementValid(drawnCard, row, col)) {
                     board[row][col] = drawnCard;
                     cardDeck.push(oldCard);
@@ -394,7 +389,7 @@
                     score += 5;
                     setMessage("카드를 성공적으로 교체했습니다.");
                 } else {
-                    board[row][col] = oldCard; // Revert
+                    board[row][col] = oldCard; // 원상 복구
                     setMessage("교체 시 규칙 위반입니다. 교체하지 않았습니다.", true);
                 }
             }
@@ -422,6 +417,7 @@
                                 board[i][j] = drawnCard;
                                 filledCells++;
                                 score += 10;
+                                setMessage(`시뮬레이션: (${i}, ${j})에 ${board[i][j]} 놓기`);
                                 placementFound = true;
                                 break;
                             }
@@ -437,11 +433,12 @@
                     cardDeck.push(drawnCard);
                     shuffleDeck();
                     score -= 20;
+                    setMessage("시뮬레이션: 놓을 곳이 없어 카드를 버립니다. 점수 -20.");
                     renderBoard();
                     updateUI();
                 }
                 
-            }, 500); // 0.5 seconds
+            }, 500); // 0.5초마다 실행
         };
 
         const stopSimulation = () => {
@@ -463,7 +460,7 @@
             }
         };
 
-        // Event listeners
+        // 이벤트 리스너 등록
         document.addEventListener('DOMContentLoaded', initializeGame);
         drawButton.addEventListener('click', handleDrawCard);
         discardButton.addEventListener('click', handleDiscardCard);
@@ -480,7 +477,7 @@
             messageBox.style.display = 'none';
         });
 
-        // Fullscreen state change
+        // 전체 화면 상태 변경 감지
         document.addEventListener('fullscreenchange', () => {
             if (document.fullscreenElement) {
                 body.classList.add('is-fullscreen');
@@ -491,7 +488,7 @@
             }
         });
 
-        // Initialize on page load
+        // 페이지 로드 시 게임 초기화
         initializeGame();
     </script>
 </body>
