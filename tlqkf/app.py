@@ -2,19 +2,23 @@ import streamlit as st
 import os
 import streamlit.components.v1 as components
 
+# 현재 스크립트 파일의 디렉토리 경로를 가져옵니다.
+# Get the directory path of the current script file.
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # HTML 파일을 담고 있는 폴더 경로 설정
-# The folder containing the HTML files
-HTMLS_FOLDER = "htmls"
+# Set the folder containing the HTML files.
+HTMLS_FOLDER = os.path.join(CURRENT_DIR, "htmls")
 
 # Streamlit 앱의 페이지 설정
-# Set the title for the Streamlit app
+# Set the title for the Streamlit app.
 st.set_page_config(
     page_title="HTML 파일 뷰어",
     layout="wide"
 )
 
 # 폴더 내의 HTML 파일 목록 가져오기
-# Get a list of HTML files in the specified folder
+# Get a list of HTML files in the specified folder.
 def get_html_files():
     try:
         files = [f for f in os.listdir(HTMLS_FOLDER) if f.endswith('.html')]
@@ -26,7 +30,7 @@ def get_html_files():
 html_files = get_html_files()
 
 # 사이드바에 파일 선택 위젯 생성
-# Create a file selection widget in the sidebar
+# Create a file selection widget in the sidebar.
 if not html_files:
     st.warning("HTML 파일이 없습니다. 'htmls' 폴더에 파일을 추가해주세요.")
 else:
@@ -37,12 +41,12 @@ else:
     )
 
     # 선택된 파일 내용 읽기
-    # Read the content of the selected file
+    # Read the content of the selected file.
     with open(os.path.join(HTMLS_FOLDER, selected_file), "r", encoding="utf-8") as f:
         html_content = f.read()
 
     # Streamlit에 HTML 내용 렌더링
-    # Render the HTML content in Streamlit
+    # Render the HTML content in Streamlit.
     st.header(f"'{selected_file}'")
     components.html(html_content, height=800, scrolling=True)
 
