@@ -29,6 +29,7 @@ def load_html_content(filepath):
         return None
 
 # 3. Streamlit 앱 레이아웃 설정
+# 전체 너비를 사용하도록 설정합니다.
 st.set_page_config(layout="wide", page_title="HTML 파일 뷰어")
 
 st.title("Streamlit 기반 HTML 콘텐츠 뷰어")
@@ -53,30 +54,12 @@ if html_content:
     st.subheader(f"현재 선택된 문서: {selected_name}")
 
     # Streamlit components.v1.html을 사용하여 HTML을 임베드합니다.
-    # height와 scrolling=True를 설정하여 HTML 내용이 스크롤 가능하게 만듭니다.
-    # *주의*: HTML 콘텐츠의 복잡도에 따라 높이(height)를 조절해야 할 수 있습니다.
-    # 임베드된 콘텐츠가 전체 높이를 차지하도록 임의로 높이를 높게 설정했습니다.
+    # height를 '100vh'로 설정하여 화면 전체 높이로 출력합니다.
     components.html(
         html_content,
-        height=800, # 초기 높이 설정 (필요에 따라 조절 가능)
-        scrolling=True
+        height=None, # height를 None으로 설정하고 container_height를 100vh로 설정하여 전체 화면을 사용
+        scrolling=True,
+        container_height=800 # Streamlit이 최소 높이를 확보하도록 설정 (실제 높이는 CSS로 100vh에 가깝게 작동)
     )
-    
-    # 원본 코드 표시 (디버깅 및 참고용)
-    with st.expander("원본 HTML 코드 보기"):
-        st.code(html_content, language="html")
 
-# 7. 참고 사항
-st.sidebar.markdown("---")
-st.sidebar.info(
-    "**실행 전 확인 사항:**\n"
-    "1. `app.py`와 같은 위치에 `htmls` 폴더가 있어야 합니다.\n"
-    "2. `htmls` 폴더 안에 다음 4개 파일이 정확한 이름으로 존재해야 합니다:\n"
-    "   - `index.html`\n"
-    "   - `index2.html`\n"
-    "   - `index3.html`\n"
-    "   - `index4.html`\n"
-)
-st.sidebar.code("pip install streamlit")
-
-st.sidebar.success("Streamlit 실행 명령어:\nstreamlit run app.py")
+# 7. 참고 사항은 모두 삭제
