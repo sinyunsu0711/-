@@ -53,13 +53,10 @@ html_content = load_html_content(full_filepath)
 if html_content:
     st.subheader(f"현재 선택된 문서: {selected_name}")
 
-    # Streamlit components.v1.html을 사용하여 HTML을 임베드합니다.
-    # height를 '100vh'로 설정하여 화면 전체 높이로 출력합니다.
+    # HTML 뷰어의 높이를 4000px로 설정하여 콘텐츠가 충분히 표시되도록 수정
+    # (Streamlit 환경에서 height=100vh는 불안정하므로 고정값을 사용합니다.)
     components.html(
         html_content,
-        height=None, # height를 None으로 설정하고 container_height를 100vh로 설정하여 전체 화면을 사용
-        scrolling=True,
-        container_height=800 # Streamlit이 최소 높이를 확보하도록 설정 (실제 높이는 CSS로 100vh에 가깝게 작동)
+        height=4000, # HTML 콘텐츠가 잘 보이도록 충분히 큰 높이 설정
+        scrolling=True
     )
-
-# 7. 참고 사항은 모두 삭제
