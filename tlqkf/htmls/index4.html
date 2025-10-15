@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정보과제연구 계획서 (3D 시각화 시스템)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter 폰트 로드 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        /* Inter 폰트를 기본으로 사용하며, 한글은 시스템 폰트에서 깔끔한 고딕 계열을 사용하도록 설정 */
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background-color: #f7f7f9; /* 아주 연한 배경 */
+        }
+        .section-icon {
+            width: 28px;
+            height: 28px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        /* Notion 스타일의 그림자 효과 */
+        .card-shadow {
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+            transition: all 0.2s ease;
+        }
+        .card-shadow:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased">
+
+    <!-- Tailwind Config for Colors (Optional, but good practice for custom colors) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-accent': '#4f46e5', /* Indigo 600 */
+                        'secondary-accent': '#f59e0b', /* Amber 500 */
+                    },
+                }
+            }
+        }
+    </script>
+
+    <div class="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- 1. 헤더: 연구 주제 및 연구자 정보 -->
+        <header class="bg-white rounded-xl shadow-lg p-8 mb-10 card-shadow border-t-4 border-primary-accent">
+            <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900 leading-tight">
+                정보과제연구 계획서
+            </h1>
+            <h2 class="text-2xl sm:text-3xl font-bold text-gray-700 mt-4">
+                Mapbox GL JS와 Three.js를 활용한 실시간 글로벌 재난 및 주요 사건의 3차원 시각화 시스템 연구 및 구현
+            </h2>
+            <div class="mt-6 pt-4 border-t border-gray-100">
+                <p class="text-lg font-medium text-gray-500">
+                    연구자: [연구자 이름 Placeholder]
+                </p>
+            </div>
+        </header>
+
+        <!-- 2. 본문 섹션 컨테이너 -->
+        <main class="space-y-10">
+
+            <!-- 1. 연구 주제 -->
+            <section id="topic" class="bg-white p-6 sm:p-8 rounded-xl card-shadow">
+                <h3 class="flex items-center text-xl sm:text-2xl font-semibold mb-4 border-b pb-3 text-primary-accent">
+                    <!-- Rocket SVG Icon -->
+                    <svg class="section-icon text-secondary-accent" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.29-2.73 0-3-.95-.61-1.12-1.65-1-2-.04.45-.04.9-.2 1.35C4.65 14.86 4.3 15.61 4.5 16.5z"/><path d="m18 2.5-.5 1c-.13.26-.47.66-.57.87l-1.42 2.84c-.2.4-.5.85-.75 1.3L9.5 18l-.5 2c-.07.24-.13.5-.2.74C8.65 21.6 8 22 8 22s4-1 6-3c.5-.5 1.3-.7 1.8-.7h2c1 0 2.2-.2 3.1-1.1C22 17.6 22.1 16 21 15.1c-.24-.22-.6-.4-1.3-.6-1.5-.45-2.2-.87-3.2-1.5-1-.63-1.4-.84-2.1-1.2l-3.2-1.72c-.1-.05-.2-.1-.3-.15-.1.05-.2.1-.3.15l-3.2 1.72c-.7.36-1.1.57-2.1 1.2-1 .63-1.7.85-3.2 1.5-.7.2-1.06.38-1.3.6-.9 1.1-.8 2.7.1 3.6.9.9 2.1 1.1 3.1 1.1h2c.5 0 1.3.2 1.8.7l-.5 2c-.07.24-.13.5-.2.74C8.65 21.6 8 22 8 22s4-1 6-3c.5-.5 1.3-.7 1.8-.7h2c1 0 2.2-.2 3.1-1.1C22 17.6 22.1 16 21 15.1c-.24-.22-.6-.4-1.3-.6-1.5-.45-2.2-.87-3.2-1.5-1-.63-1.4-.84-2.1-1.2L12 9.5l-.5-.98c-.2-.4-.5-.85-.75-1.3l-1.42-2.84c-.1-.2-.44-.6-.57-.87l-.5-1c-.13-.26-.1-.5.06-.8l.2-.4c.16-.3.46-.47.76-.36l4.2 1.6c.3.1.6.08.9-.02l4.2-1.6c.3-.1.6-.08.76.36l.2.4c.16.3.13.54-.06.8z"/></svg>
+                    1. 연구 주제
+                </h3>
+                <p class="text-lg font-medium text-gray-700 bg-indigo-50/70 p-4 rounded-lg border border-indigo-200">
+                    Mapbox GL JS와 Three.js를 활용한 실시간 글로벌 재난 및 주요 사건의 3차원 시각화 시스템 연구 및 구현
+                </p>
+            </section>
+
+            <!-- 2. 서론 -->
+            <section id="introduction" class="bg-white p-6 sm:p-8 rounded-xl card-shadow">
+                <h3 class="flex items-center text-xl sm:text-2xl font-semibold mb-4 border-b pb-3 text-primary-accent">
+                    <!-- Lightbulb SVG Icon -->
+                    <svg class="section-icon text-secondary-accent" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .6-1.6.9-2.2.4-.7.6-1.5.5-2.4C15.7 6.3 14 5 12 5s-3.7 1.3-3.9 3.4c-.1.9.1 1.7.5 2.4.3.6.7 1.2.9 2.2"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+                    2. 서론
+                </h3>
+
+                <!-- 가. 연구 동기 및 필요성 (Card) -->
+                <div class="mb-6 p-5 border border-amber-300 rounded-lg bg-amber-50">
+                    <h4 class="text-lg font-bold text-amber-800 mb-2">가. 연구 동기 및 필요성</h4>
+                    <p class="text-gray-700 mb-3">
+                        기존의 지리 공간 정보 시각화는 주로 2차원(2D) 지도 마커나 폴리곤 형태로 데이터를 표현하는 데 집중되어 있어, 데이터의 규모나 중요도 같은 속성 값을 사용자에게 직관적이고 효과적으로 전달하는 데 한계가 있었습니다. 특히 지진, 산불, 허리케인 등 영향도의 차이가 큰 글로벌 사건들을 단일 평면 위에 나열할 경우, 정보의 중요성이 제대로 부각되지 않을 수 있습니다.
+                    </p>
+                    <p class="text-gray-700">
+                        본 연구는 Mapbox의 지도 렌더링 환경 위에 Three.js(WebGL)를 통합하여 데이터를 3차원 모델(Box Geometry)로 표현함으로써, 사건의 영향도를 모델의 높이나 색상으로 시각적으로 인코딩하는 혁신적인 방법을 제시합니다. 이는 사용자에게 공간적, 규모적 측면에서 정보를 입체적으로 전달하여 **데이터 이해도와 몰입도를 극대화할 필요성**에서 출발했습니다.
+                    </p>
+                </div>
+
+                <!-- 나. 연구 목적 (List) -->
+                <div class="mb-6">
+                    <h4 class="text-lg font-bold text-gray-700 mb-3 border-b pb-1">나. 연구 목적</h4>
+                    <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                        <li>**안정적인 3D 렌더링 환경 구축**: Mapbox GL JS의 Custom Layer 기능을 활용하여 Three.js 씬을 지도 레이어와 정확히 동기화하고, 3D 모델을 안정적으로 렌더링하는 환경을 구축한다.</li>
+                        <li>**데이터 속성 기반 3D 시각화 구현**: Mock 데이터를 기반으로 사건 유형(재난, 정상회담 등) 및 영향도에 따라 모델의 높이와 색상이 자동으로 변화하는 맞춤형 3D 프리즘 모델을 지도 위에 배치한다.</li>
+                        <li>**실시간 상호작용 시스템 개발**: 3D 모델 클릭 시 Three.js의 Raycasting 기술을 사용하여 객체를 정확히 감지하고, 해당 사건의 상세 정보를 메시지 박스로 출력하는 상호작용 인터페이스를 제공한다.</li>
+                    </ul>
+                </div>
+
+                <!-- 다. 연구 문제 (List) -->
+                <div>
+                    <h4 class="text-lg font-bold text-gray-700 mb-3 border-b pb-1">다. 연구 문제</h4>
+                    <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                        <li>**좌표계 변환 문제**: Mapbox의 지리 좌표계(위도/경도)를 Three.js의 3D 월드 좌표계(Mercator Coordinate)로 어떻게 정확하게 변환하여 3D 모델을 지도상에 오차 없이 배치할 수 있는가?</li>
+                        <li>**렌더링 동기화 및 성능 문제**: 지도 뷰포트(줌, 회전, 기울기) 변경 시 Three.js 씬을 Mapbox 렌더링 사이클과 동기화하여 끊김 없는 동적 3D 시각화를 유지할 수 있는가?</li>
+                        <li>**보안 환경 대응**: iFrame 등 제한적인 웹 환경에서 Mapbox 초기화 시 발생하는 크로스-오리진(Cross-Origin) 보안 오류를 효과적으로 예외 처리하고 사용자 UI의 안정성을 확보할 수 있는가?</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 3. 이론적 배경 -->
+            <section id="theory" class="bg-white p-6 sm:p-8 rounded-xl card-shadow">
+                <h3 class="flex items-center text-xl sm:text-2xl font-semibold mb-4 border-b pb-3 text-primary-accent">
+                    <!-- BookOpen SVG Icon -->
+                    <svg class="section-icon text-secondary-accent" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    3. 이론적 배경
+                </h3>
+
+                <!-- 가. 관련 이론/기술 및 선행 연구 조사 (Table) -->
+                <div>
+                    <h4 class="text-lg font-bold text-gray-700 mb-3">가. 관련 이론/기술 및 선행 연구 조사</h4>
+                    <div class="overflow-x-auto rounded-lg border border-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-indigo-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider w-1/5">분류</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider w-1/5">이론/기술</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider w-3/5">설명 및 적용 방안</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-100 text-sm">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium">지도 플랫폼</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">Mapbox GL JS</td>
+                                    <td class="px-6 py-4">WebGL을 기반으로 벡터 타일과 사용자 정의 스타일을 렌더링하는 핵심 플랫폼. **Custom Layer** 기능을 사용하여 외부 WebGL(Three.js) 렌더링을 지도에 통합하는 기반을 제공함.</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium">3D 렌더링</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">Three.js 및 WebGL</td>
+                                    <td class="px-6 py-4">웹 브라우저에서 3차원 그래픽 및 상호작용을 구현하는 JavaScript 라이브러리. **THREE.BoxGeometry**를 사용하여 사건의 영향도를 시각화하는 3D 프리즘 모델을 생성하고 광원(Light)을 설정하는 데 사용됨.</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium">좌표 변환</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">Mapbox Mercator Coordinate</td>
+                                    <td class="px-6 py-4">위도/경도 좌표를 Mapbox의 3D 월드 공간에 맞게 변환하는 클래스. **mapboxgl.MercatorCoordinate.fromLngLat**을 사용하여 3D 모델을 정확한 지리적 위치에 배치하는 데 필수적임.</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium">상호작용</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">Raycasting</td>
+                                    <td class="px-6 py-4">3D 씬에서 마우스 포인터의 2D 화면 좌표를 3D 공간의 광선으로 변환하여, 이 광선과 충돌하는 객체(3D 모델)를 감지하는 기술. **3D 객체 클릭 이벤트 처리**에 활용됨.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. 연구 내용 및 방법 -->
+            <section id="methodology" class="bg-white p-6 sm:p-8 rounded-xl card-shadow">
+                <h3 class="flex items-center text-xl sm:text-2xl font-semibold mb-4 border-b pb-3 text-primary-accent">
+                    <!-- Vial SVG Icon -->
+                    <svg class="section-icon text-secondary-accent" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m14 11-4 4V7l4 4"/><path d="M10 20.5v-2.5"/><path d="M14 18v2.5"/><path d="M15 21h-6"/><path d="M9 3v2"/><path d="M15 3v2"/><path d="M6.5 5h11C18.9 5 20 6.1 20 7.5S18.9 10 17.5 10h-11C5.1 10 4 8.9 4 7.5S5.1 5 6.5 5Z"/></svg>
+                    4. 연구 내용 및 방법
+                </h3>
+
+                <!-- 가. 연구 대상, 절차, 방법 및 일정 -->
+                <div class="mb-8">
+                    <h4 class="text-lg font-bold text-gray-700 mb-3">가. 연구 대상, 절차, 방법 및 일정</h4>
+                    <p class="mb-3 pl-3 border-l-4 border-primary-accent/50 text-gray-700">
+                        * 연구 대상: **가상의 글로벌 주요 사건 데이터셋 (MOCK_EVENTS)**. 각 데이터는 id, title, type, latitude, longitude, impact, country, model_color, model_height 속성을 포함한다.
+                    </p>
+                    <p class="mb-5 pl-3 border-l-4 border-primary-accent/50 text-gray-700">
+                        * 방법: HTML, Tailwind CSS, JavaScript를 사용한 **프로토타입 구현 및 기능 검증 방식**.
+                    </p>
+
+                    <!-- 연구 절차 테이블 -->
+                    <div class="overflow-x-auto rounded-lg border border-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-indigo-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider w-1/6">단계</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider w-3/6">연구 절차 및 내용</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider w-2/6">주요 구현 기술</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-100 text-sm">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium text-primary-accent">1단계</td>
+                                    <td class="px-6 py-4">기반 환경 설정 및 데이터 정의</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">Mapbox GL JS, Three.js, Mock Data, Tailwind CSS</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium text-primary-accent">2단계</td>
+                                    <td class="px-6 py-4">3D 렌더링 통합 (Custom Layer)</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">Mapbox Custom Layer, THREE.Camera, THREE.Scene, THREE.WebGLRenderer</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium text-primary-accent">3단계</td>
+                                    <td class="px-6 py-4">3D 모델 배치 및 시각화</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">MOCK_EVENTS 반복 처리, THREE.BoxGeometry, Mercator Coordinate 변환, 높이/색상 인코딩</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium text-primary-accent">4단계</td>
+                                    <td class="px-6 py-4">상호작용 및 디버깅</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">Raycasting을 이용한 클릭 이벤트 처리, 상세 정보 메시지 출력, 지도 초기화 보안 오류 예외 처리</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. 기대 효과 및 활용 방안 -->
+            <section id="expected_effects" class="bg-white p-6 sm:p-8 rounded-xl card-shadow">
+                <h3 class="flex items-center text-xl sm:text-2xl font-semibold mb-4 border-b pb-3 text-primary-accent">
+                    <!-- Sparkles SVG Icon -->
+                    <svg class="section-icon text-secondary-accent" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20a8 8 0 0 0 8-8 4 4 0 0 0-4-4"/><path d="M22 14v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h10"/><path d="M18 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/><path d="m19 12-2.5-2.5L14 12"/></svg>
+                    5. 기대 효과 및 활용 방안
+                </h3>
+
+                <!-- 가. 기대 효과 및 활용 방안 (Table/List-like structure) -->
+                <div>
+                    <h4 class="text-lg font-bold text-gray-700 mb-4">가. 기대 효과 및 활용 방안</h4>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- 카드 1: 정보 전달력 극대화 -->
+                            <div class="p-4 rounded-lg bg-indigo-50 border border-indigo-200">
+                                <p class="text-sm font-semibold text-indigo-700 mb-1">기대 효과</p>
+                                <p class="text-lg font-bold text-primary-accent">정보 전달력 극대화</p>
+                                <p class="text-sm text-gray-600 mt-2">실시간 재난 관리 대시보드에서 사건의 규모를 3D 높이로 시각화하여 우선순위를 직관적으로 파악.</p>
+                            </div>
+                            <!-- 카드 2: 기술적 심화 -->
+                            <div class="p-4 rounded-lg bg-indigo-50 border border-indigo-200">
+                                <p class="text-sm font-semibold text-indigo-700 mb-1">기대 효과</p>
+                                <p class="text-lg font-bold text-primary-accent">기술적 심화</p>
+                                <p class="text-sm text-gray-600 mt-2">WebGL 기반의 고급 지리 공간 시각화 기술에 대한 이해 및 숙련도 향상.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- 카드 3: 새로운 시각화 모델 제시 -->
+                            <div class="p-4 rounded-lg bg-indigo-50 border border-indigo-200">
+                                <p class="text-sm font-semibold text-indigo-700 mb-1">활용 방안</p>
+                                <p class="text-lg font-bold text-primary-accent">새로운 시각화 모델 제시</p>
+                                <p class="text-sm text-gray-600 mt-2">단순 2D 마커를 넘어 3D 차원을 활용한 데이터 시각화의 새로운 표준을 제시.</p>
+                            </div>
+                            <!-- 카드 4: 응용 확장 가능성 -->
+                            <div class="p-4 rounded-lg bg-indigo-50 border border-indigo-200">
+                                <p class="text-sm font-semibold text-indigo-700 mb-1">활용 방안</p>
+                                <p class="text-lg font-bold text-primary-accent">응용 확장 가능성</p>
+                                <p class="text-sm text-gray-600 mt-2">환경 데이터, 인구 밀도, 경제 지표 등 다양한 지리 공간 데이터의 동적 3D 분석 시스템으로 확장 활용.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 3. 푸터 -->
+        <footer class="mt-10 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
+            <p>&copy; 2024 정보과제연구 계획서 | 최고의 3D 시각화 프로젝트를 응원합니다!</p>
+            <p class="mt-1">Powered by Mapbox GL JS & Three.js</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
