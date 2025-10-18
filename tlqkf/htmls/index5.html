@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>노력 네트워크 최단 경로 시뮬레이터 (Dijkstra)</title>
+    <!-- Tailwind CSS CDN 로드 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter 폰트 설정 -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+        .code-output {
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        /* SVG 노드 기본 스타일 */
+        .node {
+            fill: #ef4444; /* red-500 (친구 노드) */
+            transition: all 0.3s ease-in-out;
+        }
+        /* SVG 링크 기본 스타일 */
+        .link {
+            stroke: #9ca3af; /* gray-400 */
+            stroke-width: 2;
+            transition: stroke 0.3s ease-in-out, stroke-width 0.3s ease-in-out;
+        }
+        /* 시각화용 스타일 */
+        .node-current { fill: #facc15; } /* yellow-400 */
+        .link-relaxed { stroke: #10b981; stroke-width: 4; } /* emerald-500 (거리 갱신) */
+        .path-final { stroke: #3b82f6; stroke-width: 5; } /* blue-500 (최종 경로) */
+        .node-final { fill: #3b82f6; } /* blue-500 */
+        
+        .weight-input {
+            width: 4rem; 
+            padding: 0.2rem; 
+            text-align: center;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            transition: border-color 0.15s;
+        }
+        .weight-input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5);
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <div class="max-w-5xl mx-auto bg-white shadow-xl rounded-2xl p-6 md:p-10">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2 border-b-4 border-red-500 pb-2">
+            🤝 노력 네트워크 최단 경로 시뮬레이터
+        </h1>
+        <p class="text-gray-500 mb-6">
+            이 시뮬레이터는 **가장 적은 '노력'이나 '시간'**을 들여 모든 친구에게 도달하는 경로를 찾아냅니다. 
+        </p>
+
+        <!-- 네트워크 지도 및 시각화 영역 -->
+        <div class="bg-red-50 p-5 rounded-xl shadow-inner mb-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- 시각화 영역 -->
+            <div>
+                <h2 class="text-xl font-semibold text-red-700 mb-4">🗺️ 친구 관계 지도 (실시간 탐색)</h2>
+                <div class="p-3 bg-white rounded-lg border border-red-200 shadow-md">
+                    <svg id="networkSVG" width="100%" height="300" viewBox="0 0 500 300" class="w-full"></svg>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">
+                    <span class="text-red-500 font-bold">원</span>: 친구 (노드), <span class="text-gray-600 font-bold">선</span>: 관계 (링크), <span class="text-gray-600 font-bold">숫자</span>: 연결 유지 노력(가중치)
+                </p>
+            </div>
+
+            <!-- 가중치 설정 영역 -->
+            <div>
+                <h2 class="text-xl font-semibold text-red-700 mb-4">✍️ 관계 노력(가중치) 설정</h2>
+                <p class="text-gray-700 mb-3">각 연결에 드는 노력(시간/비용)을 숫자로 입력하세요. (숫자가 낮을수록 친밀하거나 가기 쉬운 길)</p>
+                <div id="networkMap" class="p-3 bg-white rounded-lg border border-red-200 grid grid-cols-2 gap-x-4 gap-y-2 code-output text-gray-900 h-40 overflow-y-auto">
+                    <!-- Input fields will be dynamically populated by JS -->
+                </div>
+            </div>
+        </div>
+
+
+        <!-- 설정 및 실행 영역 -->
+        <div class="bg-indigo-50 p-5 rounded-xl shadow-inner mb-8">
+            <h2 class="text-xl font-semibold text-indigo-700 mb-4">시뮬레이션 설정 및 실행</h2>
+            <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <label for="startRouter" class="text-gray-700 font-medium whitespace-nowrap">
+                    출발 친구 (나) 선택:
+                </label>
+                <select id="startRouter" class="p-2 border border-indigo-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 flex-grow">
+                    <!-- Options populated by JavaScript -->
+                </select>
+                <button onclick="runSimulationUI()" id="runButton" class="w-full sm:w-auto px-6 py-2 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition duration-150 shadow-md">
+                    최단 노력 경로 탐색
+                </button>
+            </div>
+        </div>
+
+        <!-- 결과 표시 영역 -->
+        <div id="resultsContainer" class="space-y-8">
+            <!-- 시뮬레이션 로그 -->
+            <div class="border-2 border-gray-200 rounded-xl p-4">
+                <h2 class="text-xl font-semibold text-gray-800 mb-3">🔍 탐색 로그: 최소 노력 경로 찾는 과정</h2>
+                <div id="logOutput" class="bg-gray-800 text-green-400 p-3 rounded-lg code-output h-64 overflow-y-auto">
+                    실행 버튼을 눌러 시뮬레이션을 시작하세요.
+                </div>
+                <p class="text-xs text-gray-500 mt-2">
+                    **[탐색]** 노란색으로 반짝이는 친구를 경유할 때, **[거리 갱신]**은 청록색 선으로 더 적은 노력이 드는 새로운 경로를 찾았다는 의미입니다.
+                </p>
+            </div>
+
+            <!-- 최종 라우팅 테이블 -->
+            <div class="border-2 border-gray-200 rounded-xl p-4">
+                <h2 class="text-xl font-semibold text-gray-800 mb-3">📊 최종 최소 노력 테이블 (관계 정리표)</h2>
+                <div id="tableOutput" class="overflow-x-auto">
+                    <!-- Table will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 네트워크의 구조 (노드와 링크) 및 초기 가중치 정의
+        const INITIAL_LINKS = [
+            { u: 'A', v: 'B', cost: 5 }, { u: 'A', v: 'C', cost: 1 },
+            { u: 'B', v: 'C', cost: 2 }, { u: 'B', v: 'D', cost: 3 },
+            { u: 'C', v: 'E', cost: 10 }, { u: 'C', v: 'F', cost: 8 },
+            { u: 'D', v: 'F', cost: 1 },
+            { u: 'E', v: 'F', cost: 4 }
+        ];
+
+        // SVG 시각화를 위한 노드 위치 정의 (x, y 좌표)
+        const NODE_POSITIONS = {
+            'A': {x: 50, y: 150},
+            'B': {x: 200, y: 50},
+            'C': {x: 200, y: 250},
+            'D': {x: 350, y: 50},
+            'E': {x: 450, y: 200},
+            'F': {x: 350, y: 150}
+        };
+
+        const NODE_RADIUS = 15;
+        const STEP_DELAY = 600; 
+        let visualizationSteps = []; 
+        let isVisualizing = false;
+
+        const logOutput = document.getElementById('logOutput');
+        const tableOutput = document.getElementById('tableOutput');
+        const startRouterSelect = document.getElementById('startRouter');
+        const networkMap = document.getElementById('networkMap');
+        const svgContainer = document.getElementById('networkSVG');
+        const runButton = document.getElementById('runButton');
+        let currentGraph = {}; // 현재 UI 가중치를 반영한 그래프
+
+        // ------------------ 헬퍼 함수 ------------------
+
+        /**
+         * SVG ID를 생성합니다. (노드: n-A, 링크: l-A-B)
+         */
+        function getElementId(type, node1, node2) {
+            if (type === 'node') return `n-${node1}`;
+            if (type === 'dist') return `d-${node1}`;
+            if (type === 'input') return `input-${node1}-${node2}`;
+            // 링크 ID는 알파벳 순서로 통일
+            const [u, v] = [node1, node2].sort();
+            return `l-${u}-${v}`;
+        }
+
+        /**
+         * 로그를 UI에 추가하고 스크롤을 맨 아래로 이동합니다.
+         */
+        function appendLog(message) {
+            logOutput.innerHTML += message + '\n';
+            logOutput.scrollTop = logOutput.scrollHeight;
+        }
+
+        /**
+         * 최단 경로를 재구성합니다.
+         */
+        function reconstructPath(previousNodes, startNode, targetNode) {
+            let path = [];
+            let current = targetNode;
+            
+            while (current !== null) {
+                path.push(current);
+                current = previousNodes[current];
+                
+                if (current === startNode) {
+                    path.push(startNode);
+                    break;
+                }
+                if (current === undefined && path.length > 0 && path[path.length - 1] !== startNode) {
+                    return "경로 없음";
+                }
+            }
+            
+            return path.reverse().join(" → ");
+        }
+
+        /**
+         * UI의 입력값을 읽어 새로운 그래프를 구성합니다.
+         */
+        function getCustomGraph() {
+            const graph = {};
+            const nodes = Object.keys(NODE_POSITIONS);
+            for (const node of nodes) {
+                graph[node] = {};
+            }
+
+            let allWeightsValid = true;
+
+            INITIAL_LINKS.forEach(link => {
+                const [u, v] = [link.u, link.v].sort();
+                const inputId = getElementId('input', u, v); // 정렬된 ID 사용
+                const inputEl = document.getElementById(inputId);
+                let weight;
+                
+                // 입력 필드가 없거나 값을 가져올 수 없으면 건너뜁니다.
+                if (!inputEl) {
+                    weight = link.cost; 
+                } else {
+                    weight = parseInt(inputEl.value, 10);
+                }
+
+                if (isNaN(weight) || weight <= 0 || weight > 999) {
+                    // 유효하지 않은 값 처리
+                    weight = link.cost; // 기본값으로 복원
+                    if (inputEl) inputEl.value = weight; // UI도 복원
+                    allWeightsValid = false;
+                }
+
+                // 가중치를 양방향으로 적용
+                graph[link.u][link.v] = weight;
+                graph[link.v][link.u] = weight;
+            });
+
+            if (!allWeightsValid) {
+                appendLog(`[경고] 잘못된 비용(0 이하 또는 너무 큰 값)은 기본값으로 복원되었습니다.`);
+            }
+
+            return graph;
+        }
+        
+        // ------------------ SVG 시각화 ------------------
+
+        /**
+         * SVG에 네트워크 그래프를 초기 상태로 그립니다.
+         */
+        function drawNetwork(graph) {
+            svgContainer.innerHTML = '';
+            
+            const linksGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            const nodesGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            const textGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+            // 1. 링크 (Lines) 그리기
+            const drawnLinks = new Set();
+            for (const node1 in graph) {
+                for (const node2 in graph[node1]) {
+                    // 중복 링크 방지 (A-B와 B-A)
+                    const linkId = getElementId('link', node1, node2);
+                    if (drawnLinks.has(linkId)) continue;
+                    drawnLinks.add(linkId);
+
+                    const pos1 = NODE_POSITIONS[node1];
+                    const pos2 = NODE_POSITIONS[node2];
+                    const cost = graph[node1][node2];
+
+                    // Link Line
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('id', linkId);
+                    line.setAttribute('x1', pos1.x);
+                    line.setAttribute('y1', pos1.y);
+                    line.setAttribute('x2', pos2.x);
+                    line.setAttribute('y2', pos2.y);
+                    line.setAttribute('class', 'link');
+                    linksGroup.appendChild(line);
+
+                    // Cost Text (Link 가중치)
+                    const costText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    costText.setAttribute('x', (pos1.x + pos2.x) / 2);
+                    costText.setAttribute('y', (pos1.y + pos2.y) / 2 - 5);
+                    costText.textContent = cost;
+                    costText.setAttribute('fill', '#4b5563'); // gray-600
+                    costText.setAttribute('font-size', '12');
+                    costText.setAttribute('font-weight', 'bold');
+                    costText.setAttribute('text-anchor', 'middle');
+                    textGroup.appendChild(costText);
+                }
+            }
+
+            // 2. 노드 (Circles) 및 텍스트 그리기
+            const startNode = startRouterSelect.value;
+            for (const node in NODE_POSITIONS) {
+                const pos = NODE_POSITIONS[node];
+
+                // Node Circle
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('id', getElementId('node', node));
+                circle.setAttribute('cx', pos.x);
+                circle.setAttribute('cy', pos.y);
+                circle.setAttribute('r', NODE_RADIUS);
+                circle.setAttribute('class', 'node');
+                nodesGroup.appendChild(circle);
+
+                // Node Label (A, B, C...)
+                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                label.setAttribute('x', pos.x);
+                label.setAttribute('y', pos.y + 5);
+                label.textContent = node;
+                label.setAttribute('fill', 'white');
+                label.setAttribute('font-size', '14');
+                label.setAttribute('font-weight', 'bold');
+                label.setAttribute('text-anchor', 'middle');
+                nodesGroup.appendChild(label);
+
+                // Distance Text (d-A, d-B...)
+                const distText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                distText.setAttribute('id', getElementId('dist', node));
+                distText.setAttribute('x', pos.x);
+                distText.setAttribute('y', pos.y + 30);
+                distText.textContent = node === startNode ? '0' : '∞';
+                distText.setAttribute('fill', '#1f2937'); // gray-800
+                distText.setAttribute('font-size', '12');
+                distText.setAttribute('font-weight', 'bold');
+                distText.setAttribute('text-anchor', 'middle');
+                textGroup.appendChild(distText);
+            }
+            
+            svgContainer.appendChild(linksGroup);
+            svgContainer.appendChild(nodesGroup);
+            svgContainer.appendChild(textGroup);
+        }
+
+        /**
+         * 시각화 단계를 실행합니다.
+         */
+        function visualizeSteps(steps, finalPaths) {
+            if (steps.length === 0) {
+                finalPathVisualization(finalPaths);
+                runButton.disabled = false;
+                runButton.textContent = '최단 노력 경로 탐색';
+                isVisualizing = false;
+                return;
+            }
+
+            const step = steps.shift();
+            
+            // 모든 노드/링크 초기화 (이전 단계의 임시 하이라이트 해제)
+            document.querySelectorAll('.node-current, .link-relaxed').forEach(el => {
+                el.classList.remove('node-current', 'link-relaxed');
+            });
+            
+            if (step.type === 'select') {
+                // 1. 현재 노드 선택 시 시각화 및 로그 출력
+                const nodeEl = document.getElementById(getElementId('node', step.node));
+                nodeEl.classList.add('node-current');
+                appendLog(`\n[탐색] 현재 확정한 최소 노력 지점: ${step.node} (누적 노력: ${step.currentDist})`);
+
+            } else if (step.type === 'relax') {
+                // 2. 거리 갱신(Relaxation) 시 시각화 및 로그 출력
+                const linkEl = document.getElementById(getElementId('link', step.from, step.to));
+                const neighborEl = document.getElementById(getElementId('node', step.to));
+                const distTextEl = document.getElementById(getElementId('dist', step.to));
+
+                // 링크와 이웃 노드를 강조
+                linkEl.classList.add('link-relaxed');
+                neighborEl.classList.add('node-current');
+                
+                // 거리 텍스트 업데이트
+                distTextEl.textContent = step.newDist;
+
+                appendLog(`  - 이웃 친구 '${step.to}': 더 적은 노력 경로 발견! (새 누적 노력: ${step.newDist})`);
+            } else if (step.type === 'final') {
+                // 3. 노드 확정
+                const nodeEl = document.getElementById(getElementId('node', step.node));
+                nodeEl.classList.add('node-final');
+            }
+
+            // 다음 단계를 위한 재귀 호출
+            setTimeout(() => visualizeSteps(steps, finalPaths), STEP_DELAY);
+        }
+
+        /**
+         * 시뮬레이션 완료 후 최종 경로를 SVG에 그립니다.
+         */
+        function finalPathVisualization(finalPaths) {
+            // 모든 링크 초기화 (최종 경로만 남기기)
+            document.querySelectorAll('.link').forEach(el => {
+                 el.classList.remove('link-relaxed');
+                 el.classList.remove('path-final');
+                 el.style.stroke = '#9ca3af'; // 기본 색상으로 복원
+                 el.style.strokeWidth = '2'; // 기본 두께로 복원
+            });
+            
+            const startNode = startRouterSelect.value;
+
+            // 최종 경로 링크 하이라이트
+            for (const targetNode in finalPaths) {
+                if (targetNode === startNode) continue;
+
+                let current = targetNode;
+                while (current !== startNode && finalPaths[current] !== null) {
+                    const next = finalPaths[current];
+                    const linkId = getElementId('link', current, next);
+                    
+                    const linkEl = document.getElementById(linkId);
+                    if (linkEl) {
+                        linkEl.classList.add('path-final');
+                        linkEl.style.stroke = '#3b82f6';
+                        linkEl.style.strokeWidth = '4';
+                    }
+                    current = next;
+                }
+            }
+
+            // 모든 노드를 최종 색상으로
+            document.querySelectorAll('.node').forEach(el => {
+                el.classList.remove('node-current');
+                el.classList.add('node-final');
+            });
+        }
+
+
+        // ------------------ 다익스트라 알고리즘 (JS & 시각화 통합) ------------------
+
+        /**
+         * 다익스트라 알고리즘 실행 (시각화 단계를 기록)
+         */
+        function dijkstraShortestPath(graph, startNode) {
+            logOutput.innerHTML = '';
+            visualizationSteps = [];
+            
+            appendLog(`--- 시뮬레이션 시작: 출발 친구 '${startNode}'에서 최소 노력 경로 찾기 ---`);
+
+            const nodes = Object.keys(graph);
+            let distances = {};
+            let previousNodes = {};
+            
+            let unvisited = [...nodes]; 
+
+            // 1. 초기화
+            nodes.forEach(node => {
+                distances[node] = Infinity;
+                previousNodes[node] = null;
+            });
+            distances[startNode] = 0;
+
+            // 초기 거리 텍스트 업데이트
+            document.getElementById(getElementId('dist', startNode)).textContent = 0;
+
+            while (unvisited.length > 0) {
+                // 2. 미방문 노드 중 가장 가까운 노드를 선택
+                let current = unvisited.reduce((minNode, node) => {
+                    if (distances[node] < distances[minNode]) return node;
+                    return minNode;
+                }, unvisited[0]);
+                
+                let currentDistance = distances[current];
+
+                if (currentDistance === Infinity) break;
+
+                // 3. 현재 노드를 unvisited 목록에서 제거 (방문 처리)
+                unvisited = unvisited.filter(node => node !== current);
+                
+                // 시각화 단계 기록 (노드 선택)
+                visualizationSteps.push({ type: 'select', node: current, currentDist: currentDistance });
+                
+                // 4. 인접 노드들을 확인하여 거리 갱신 (Relaxation)
+                for (const neighbor in graph[current]) {
+                    const weight = graph[current][neighbor];
+                    const distance = currentDistance + weight;
+
+                    // 새로운 경로가 기존 경로보다 짧으면 갱신
+                    if (distance < distances[neighbor]) {
+                        distances[neighbor] = distance;
+                        previousNodes[neighbor] = current;
+
+                        // 시각화 단계 기록 (거리 갱신)
+                        visualizationSteps.push({ 
+                            type: 'relax', 
+                            from: current, 
+                            to: neighbor, 
+                            newDist: distance 
+                        });
+                    }
+                }
+                
+                // 시각화 단계 기록 (노드 확정)
+                visualizationSteps.push({ type: 'final', node: current });
+            }
+
+            return { distances, previousNodes };
+        }
+
+        // ------------------ UI 및 실행 ------------------
+
+        /**
+         * 시뮬레이션을 실행하고 결과를 UI에 렌더링
+         */
+        function runSimulationUI() {
+            if (isVisualizing) return;
+            isVisualizing = true;
+            runButton.disabled = true;
+            runButton.textContent = '탐색 중... 🚀';
+
+            const startRouter = startRouterSelect.value;
+            if (!startRouter) {
+                logOutput.innerHTML = "출발 친구를 선택해주세요.";
+                tableOutput.innerHTML = "";
+                runButton.disabled = false;
+                runButton.textContent = '최단 노력 경로 탐색';
+                isVisualizing = false;
+                return;
+            }
+
+            // 1. UI 입력값을 읽어 현재 그래프 구성
+            currentGraph = getCustomGraph();
+
+            // 2. 네트워크 초기화 및 그리기 (새 그래프 반영)
+            drawNetwork(currentGraph);
+
+            // 3. 다익스트라 실행 및 시각화 단계 기록
+            const { distances, previousNodes } = dijkstraShortestPath(currentGraph, startRouter);
+            
+            // 4. 시각화 시작
+            visualizeSteps(visualizationSteps, previousNodes);
+            
+            // 5. 최종 테이블 렌더링 (시각화 완료 후 표시)
+            setTimeout(() => renderRoutingTable(distances, previousNodes, startRouter), visualizationSteps.length * STEP_DELAY + 100);
+        }
+
+        /**
+         * 최종 라우팅 테이블을 HTML로 렌더링합니다.
+         */
+        function renderRoutingTable(distances, previousNodes, startRouter) {
+            let tableHtml = `
+                <p class="mb-3 text-sm text-gray-600">
+                    당신(친구 **${startRouter}**)이 모든 친구에게 최소한의 노력으로 연결되기 위해 필요한 총 노력과 경로입니다.
+                </p>
+                <table class="min-w-full divide-y divide-gray-300 rounded-xl overflow-hidden shadow-lg">
+                    <thead class="bg-indigo-600 text-white">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">목적지 친구</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">최소 누적 노력</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">가장 좋은 관계 경로</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+            `;
+            
+            const sortedNodes = Object.keys(distances).sort();
+
+            sortedNodes.forEach((targetNode, index) => {
+                if (targetNode === startRouter) return;
+                
+                const finalDistance = distances[targetNode];
+                const path = reconstructPath(previousNodes, startRouter, targetNode);
+                const distanceText = finalDistance === Infinity ? '연결 불가능' : finalDistance;
+                const pathText = path === "경로 없음" ? '이 친구와는 연결할 수 없어요 😢' : path;
+
+                const rowColor = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+
+                tableHtml += `
+                    <tr class="${rowColor} hover:bg-indigo-100 transition duration-150">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${targetNode}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-bold">${distanceText}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500 code-output">${pathText}</td>
+                    </tr>
+                `;
+            });
+
+            tableHtml += `
+                    </tbody>
+                </table>
+            `;
+            
+            tableOutput.innerHTML = tableHtml;
+        }
+
+        /**
+         * 네트워크 지도를 UI에 렌더링합니다. (가중치 입력 필드 포함)
+         */
+        function renderNetworkMap() {
+            let mapHtml = '';
+            
+            INITIAL_LINKS.forEach(link => {
+                // 입력 필드 ID는 정렬된 노드 이름으로 통일 (중복 방지)
+                const [u, v] = [link.u, link.v].sort();
+                const inputId = getElementId('input', u, v);
+
+                mapHtml += `
+                    <div class="flex items-center space-x-2 text-sm font-semibold text-gray-800">
+                        <span class="text-red-600 whitespace-nowrap">${link.u} ↔ ${link.v}</span>: 
+                        <input type="number" id="${inputId}" value="${link.cost}" min="1" max="999" class="weight-input" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                        <span class="text-xs text-gray-500">노력</span>
+                    </div>
+                `;
+            });
+            networkMap.innerHTML = mapHtml;
+        }
+
+        /**
+         * 초기 로드 시 실행
+         */
+        function init() {
+            const nodes = Object.keys(NODE_POSITIONS).sort();
+            startRouterSelect.innerHTML = nodes.map(node => 
+                `<option value="${node}">친구 ${node}</option>`
+            ).join('');
+            
+            renderNetworkMap(); 
+            
+            // A를 기본값으로 선택 후 시뮬레이션 자동 실행
+            startRouterSelect.value = 'A';
+            runSimulationUI();
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
