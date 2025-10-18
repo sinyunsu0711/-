@@ -8,12 +8,13 @@ import streamlit.components.v1 as components
 HTMLS_DIR = Path(__file__).parent / "htmls"
 
 # 2. 파일 목록 정의 (사용자 친화적인 이름과 파일명 매핑)
-# 사용자가 이전에 업로드한 파일 이름을 기반으로 매핑합니다.
+# '5. 노력 네트워크 최단 경로 시뮬레이터'와 'index5.html'을 추가했습니다.
 FILE_MAPPING = {
     "1. 정보과제연구 계획서 (절차적 생성)": "index.html",
     "2. 수업 조 편성기 (HTML App)": "index2.html",
     "3. 숫자 퍼즐 게임 (HTML Game)": "index3.html",
     "4. 정보과제연구 계획서 (3D 시각화)": "index4.html",
+    "5. 노력 네트워크 최단 경로 시뮬레이터": "index5.html",
 }
 
 def load_html_content(filepath):
@@ -54,7 +55,6 @@ if html_content:
     st.subheader(f"현재 선택된 문서: {selected_name}")
 
     # HTML 뷰어의 높이를 4000px로 설정하여 콘텐츠가 충분히 표시되도록 수정
-    # (Streamlit 환경에서 height=100vh는 불안정하므로 고정값을 사용합니다.)
     components.html(
         html_content,
         height=4000, # HTML 콘텐츠가 잘 보이도록 충분히 큰 높이 설정
